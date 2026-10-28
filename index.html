@@ -1,29 +1,95 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Neta Fighter 3D - Ultimate Parody Edition</title>
+  <title>Neta Fighter 3D — Sanshad Ring Showdown</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-  <!-- 3D WebGL Canvas -->
-  <canvas id="game-canvas"></canvas>
+  <!-- STRICT LANDSCAPE ENFORCER OVERLAY (Shows automatically if phone is held vertically) -->
+  <div id="landscapeLockOverlay">
+    <div class="rotate-card">
+      <div class="rotate-icon">📱🔄</div>
+      <h2>PLEASE ROTATE YOUR DEVICE</h2>
+      <p>This game is strictly designed for <b>Landscape Mode</b> for full 360° ring view and arcade controls.</p>
+    </div>
+  </div>
 
-  <!-- Floating 2D Speech Bubbles mapped to 3D Characters -->
-  <div id="bubble-p1" class="speech-bubble">Abki baar, jeet hamari!</div>
-  <div id="bubble-p2" class="speech-bubble">Daro mat!</div>
-  <div id="bubble-chai" class="speech-bubble">Chai garam! ₹10!</div>
+  <!-- APK / BROWSER VIBRATION POPUP (From your reference code) -->
+  <div id="apkVibrationPopup">
+    <div id="vibrationMsg">
+      <p id="apkVibText"></p>
+      <label id="apkNeverWrap" style="display:none; margin-bottom:12px; font-weight:600; color:#111;">
+        <input type="checkbox" id="apkNeverAgain" /> Don't show again
+      </label>
+      <div id="vibrationButton">
+        <button id="apkVibOK">OK</button>
+        <button id="apkVibCancel">Cancel</button>
+      </div>
+    </div>
+  </div>
 
-  <!-- CHARACTER SELECTION OVERLAY ("SELECT YOUR NETA") -->
-  <div id="select-screen" class="select-overlay">
+  <!-- LOADING SCREEN WITH PROGRESS & DISCLAIMER (From your reference code) -->
+  <div id="loader">
+    <div class="loader-emblem">🇮🇳🥊</div>
+    <div class="progress"><div class="fill" id="loadFill"></div></div>
+    <p id="loadPercent">0%</p>
+    <div id="loaderDisclaimer" class="loader-disclaimer">
+      <span style="color:red; font-size: clamp(12px, 2.8vw, 16px);">⚠ DISCLAIMER</span><br />
+      This Game Is A Political Meme Game Made For Entertainment Purpose Only. No Real Characters Are Used. Some Copyrighted Music Tracks Are Used On Purpose. This Project Does Not Intend To Hurt Anyone's Feelings. If It Does So, Sorry For That. All Players Are Requested To Take This Game For Entertainment Purpose Only.
+    </div>
+  </div>
+
+  <!-- INSTAGRAM TOP HEADER (From your reference code) -->
+  <header id="topHeader">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png"
+         alt="Instagram" width="24" height="24" style="border-radius:6px;" />
+    <span id="instaName" style="color:white;font-weight:700;font-size:14px;">
+      Created by editz__
+    </span>
+  </header>
+
+  <!-- FULLSCREEN BUTTON & TOP-RIGHT PAUSE BUTTON (From your reference code) -->
+  <button id="fsBtn" title="Toggle Fullscreen">⛶</button>
+  <button id="pauseBtn" aria-label="Pause">⏸️</button>
+
+  <!-- RIGHT-EDGE AUTO-CLOSING SLIDE PANEL (From your reference code) -->
+  <div id="slidePanel">
+    <div id="slideTab">
+      <div id="slideIcon">!</div>
+    </div>
+    <div id="slideContent">
+      <p id="suggestion">Suggestion</p>
+    </div>
+  </div>
+
+  <!-- PAUSE MENU (From your reference code + Select Neta & Music Toggle) -->
+  <div id="pauseMenu">
+    <div style="font-weight:900; font-size:18px; margin-bottom:8px; color:#fde047;">GAME PAUSED</div>
+    <button id="resumeGame">▶ Resume</button>
+    <button id="openSelectFromPause" class="blue-btn">🎭 Select Neta</button>
+    <button id="toggleMusicBtn" class="blue-btn">🎵 Music: ON</button>
+    <button id="restartGame">🔄 Restart</button>
+    <button id="exitGame" class="exit">🚪 Exit</button>
+  </div>
+
+  <!-- END-OF-MATCH / STATUS OVERLAY & BUTTONS (From your reference code) -->
+  <div id="overlayMsg">Tap / Click / Press Space to start</div>
+  <button id="restartBtn">🔄 Play Again</button>
+  <button id="exitBtn">🚪 Exit</button>
+
+  <!-- BLAST FLASH OVERLAY (From your reference code) -->
+  <div id="blastOverlay"></div>
+
+  <!-- CHARACTER SELECTION MODAL ("SELECT YOUR NETA") -->
+  <div id="select-screen" class="select-overlay hidden">
     <div class="select-card">
       <div class="select-title">🇮🇳 SELECT YOUR NETA 🇮🇳</div>
-      <div class="select-subtitle">JANTAR MANTAR SANSHAD SHOWDOWN</div>
+      <div class="select-subtitle">360° JANTAR MANTAR RING SHOWDOWN</div>
 
       <div class="roster-split">
-        <!-- Player 1 Choice -->
         <div class="roster-column">
           <div class="column-label p1-label">PLAYER 1 (YOU)</div>
           <div id="p1-roster" class="roster-grid"></div>
@@ -31,27 +97,29 @@
 
         <div class="vs-divider">VS</div>
 
-        <!-- Player 2 (CPU) Choice -->
         <div class="roster-column">
           <div class="column-label p2-label">OPPONENT (BOT)</div>
           <div id="p2-roster" class="roster-grid"></div>
         </div>
       </div>
 
-      <button id="btn-start-match" class="start-fight-btn">🔥 FIGHT AT JANTAR MANTAR! 🔥</button>
+      <button id="btn-start-match" class="start-fight-btn">🔥 ENTER THE RING! 🔥</button>
     </div>
   </div>
 
-  <!-- HTML/CSS HUD OVERLAY -->
+  <!-- FLOATING SPEECH BUBBLES -->
+  <div id="bubble-p1" class="speech-bubble">Abki baar, jeet hamari!</div>
+  <div id="bubble-p2" class="speech-bubble">Daro mat!</div>
+  <div id="bubble-chai" class="speech-bubble">Chai garam!</div>
+
+  <!-- IN-GAME FIGHTING HUD OVERLAY -->
   <div id="ui-layer">
-    
-    <!-- Top Section: Health Bars + Round Dots + Utility Bar -->
     <div>
       <div class="top-hud">
-        <!-- Player 1 HUD -->
+        <!-- Player 1 Health & Super -->
         <div class="fighter-hud p1">
           <div class="hud-header">
-            <span id="p1-name-label">MODI (YOU)</span>
+            <span id="p1-name-label">🪷 MODI JI (YOU)</span>
             <span id="p1-hp-label">100%</span>
           </div>
           <div class="hp-bar-outer">
@@ -66,7 +134,7 @@
             </div>
           </div>
           <div class="super-ready-wrap">
-            <span id="p1-super-tag" class="super-ready-tag">⚡ SUPER READY! (SPACE / L)</span>
+            <span id="p1-super-tag" class="super-ready-tag">⚡ SUPER READY!</span>
           </div>
         </div>
 
@@ -74,13 +142,13 @@
         <div class="timer-box">
           <div id="round-label" class="round-badge">ROUND 1</div>
           <div id="timer-text">60</div>
-          <div class="arena-badge">JANTAR MANTAR</div>
+          <div class="arena-badge">360° RING</div>
         </div>
 
-        <!-- Player 2 HUD -->
+        <!-- Player 2 Health & Super -->
         <div class="fighter-hud p2">
           <div class="hud-header">
-            <span id="p2-name-label">RAHUL (BOT)</span>
+            <span id="p2-name-label">✋ RAHUL G (BOT)</span>
             <span id="p2-hp-label">100%</span>
           </div>
           <div class="hp-bar-outer">
@@ -100,19 +168,19 @@
         </div>
       </div>
 
-      <!-- Quick Utility Buttons -->
+      <!-- Quick Utility Bar & 360 Camera Reset -->
       <div class="utility-bar">
-        <button class="action-btn" id="btn-select-neta">🎭 Select Neta</button>
+        <span class="cam-hint">🔄 Touch/Drag Screen to Rotate 360° View</span>
+        <button class="action-btn dark" id="btn-reset-cam">🎥 Reset Cam</button>
+        <button class="action-btn" id="btn-select-neta">🎭 Neta</button>
         <button class="action-btn" id="btn-p1-super">⚡ Your Super</button>
         <button class="action-btn blue" id="btn-p2-super">💥 Bot Super</button>
-        <button class="action-btn dark" id="btn-toggle-bgm">🎵 Music: ON</button>
         <button class="action-btn dark" id="btn-toggle-ai">🤖 Bot: ON</button>
-        <button class="action-btn dark" id="btn-reset">🔄 Rematch</button>
       </div>
     </div>
 
-    <!-- Combo Counter & Center Announcements -->
-    <div id="combo-toast" class="combo-toast">3 HIT COMBO!</div>
+    <!-- Combo Counter & Center Move Callouts -->
+    <div id="combo-toast" class="combo-toast">3x HIT COMBO!</div>
 
     <div id="center-announcer">
       <div id="main-banner">ROUND 1</div>
@@ -120,12 +188,10 @@
       <div id="move-banner">SUDARSHAN CHAKRA!</div>
     </div>
 
-    <!-- Bottom Section: Touch Controls (Phone) + Keyboard Bar (PC) + News Ticker -->
+    <!-- Bottom Controls + Satirical News Ticker -->
     <div class="bottom-hud">
-      
-      <!-- Mobile Touch Controls -->
+      <!-- Touch Controls for Mobile / Tablet Landscape -->
       <div class="touch-controls">
-        <!-- Left Thumb: Move + Jump + Block -->
         <div class="touch-pad-left">
           <button class="touch-btn" id="touch-left">◀<span>LEFT</span></button>
           <button class="touch-btn block-btn" id="touch-block">🛡️<span>BLOCK</span></button>
@@ -133,7 +199,6 @@
           <button class="touch-btn" id="touch-right">▶<span>RIGHT</span></button>
         </div>
 
-        <!-- Right Thumb: Combat Actions -->
         <div class="touch-pad-right">
           <button class="touch-btn punch-btn" id="touch-punch">👊<span>PUNCH</span></button>
           <button class="touch-btn kick-btn" id="touch-kick">🦵<span>KICK</span></button>
@@ -144,30 +209,33 @@
 
       <!-- PC Keyboard Legend -->
       <div class="pc-controls-panel">
+        <span>🎥 <b>Drag Mouse / Scroll</b>: 360° Camera</span>
         <span>Move: <span class="key-pill">A</span><span class="key-pill">D</span></span>
         <span>Jump: <span class="key-pill">W</span></span>
-        <span>Block: <span class="key-pill">S</span> / <span class="key-pill">↓</span></span>
+        <span>Block: <span class="key-pill">S</span></span>
         <span>Punch: <span class="key-pill">J</span></span>
         <span>Kick: <span class="key-pill">K</span></span>
         <span>Special: <span class="key-pill">U</span></span>
-        <span>Superpower: <span class="key-pill">SPACE</span> / <span class="key-pill">L</span></span>
+        <span>Super: <span class="key-pill">SPACE</span></span>
+        <span>Pause: <span class="key-pill">P</span></span>
       </div>
 
-      <!-- Satirical Breaking News Ticker -->
+      <!-- Breaking News Ticker -->
       <div class="news-ticker">
         <div class="news-badge">LIVE SANSHAD TV</div>
-        <div id="news-track" class="news-track">
+        <div class="news-track">
+          360° STADIUM PACKED AT JANTAR MANTAR! DRAG SCREEN TO VIEW AUDIENCE &nbsp;&nbsp;|&nbsp;&nbsp;
           EXIT POLL: MODI 49% • RAHUL 51% • KEJRIWAL FREE% • DIDI KHELA% (Margin of error: ±100%) &nbsp;&nbsp;|&nbsp;&nbsp;
-          BREAKING: Chaiwala demands Z+ security after kettle knocked over at Jantar Mantar &nbsp;&nbsp;|&nbsp;&nbsp;
-          Twitter splits into two after high-flying ACHE DIN ROUNDHOUSE &nbsp;&nbsp;|&nbsp;&nbsp;
-          14 TV panelists shouting simultaneously over SUDARSHAN CHAKRA aerodynamics!
+          BREAKING: Chaiwala circles the ring selling ₹10 Garam Chai power-ups!
         </div>
       </div>
     </div>
-
   </div>
 
-  <!-- Standard Three.js + Game Script -->
+  <!-- 3D WebGL Canvas -->
+  <canvas id="gameCanvas"></canvas>
+
+  <!-- Three.js + Game Script -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="script.js"></script>
 </body>
